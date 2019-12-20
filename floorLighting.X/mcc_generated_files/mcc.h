@@ -13,7 +13,7 @@
   @Description:
     This header file provides implementations for driver APIs for all modules selected in the GUI.
     Generation Information :
-        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.78
+        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.77
         Device            :  PIC18F25K22
         Driver Version    :  2.00
     The generated drivers are tested against the following:
@@ -51,10 +51,11 @@
 #include "pin_manager.h"
 #include <stdint.h>
 #include <stdbool.h>
-#include <conio.h>
+#include "interrupt_manager.h"
 #include "ccp5.h"
-#include "epwm1.h"
+#include "ext_int.h"
 #include "tmr2.h"
+#include "pwm4.h"
 #include "tmr0.h"
 #include "adc.h"
 

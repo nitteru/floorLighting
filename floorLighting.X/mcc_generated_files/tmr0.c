@@ -13,7 +13,7 @@
   @Description
     This source file provides APIs for TMR0.
     Generation Information :
-        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.78
+        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.77
         Device            :  PIC18F25K22
         Driver Version    :  2.01
     The generated drivers are tested against the following:
@@ -55,6 +55,7 @@
   Section: Global Variables Definitions
 */
 
+void (*TMR0_InterruptHandler)(void);
 
 volatile uint8_t timer0ReloadVal;
 
@@ -70,18 +71,24 @@ void TMR0_Initialize(void)
     // TMR0H 0; 
     TMR0H = 0x00;
 
-    // TMR0L 0; 
-    TMR0L = 0x00;
+    // TMR0L 6; 
+    TMR0L = 0x06;
 
 	
     // Load TMR0 value to the 8-bit reload variable
-    timer0ReloadVal = 0;
+    timer0ReloadVal = 6;
 
-    // Clearing IF flag
+    // Clear Interrupt flag before enabling the interrupt
     INTCONbits.TMR0IF = 0;
 
-    // T0PS 1:256; T08BIT 8-bit; T0SE Increment_hi_lo; T0CS T0CKI; TMR0ON enabled; PSA not_assigned; 
-    T0CON = 0xFF;
+    // Enabling TMR0 interrupt.
+    INTCONbits.TMR0IE = 1;
+
+    // Set Default Interrupt Handler
+    TMR0_SetInterruptHandler(TMR0_DefaultInterruptHandler);
+
+    // T0PS 1:4; T08BIT 8-bit; T0SE Increment_hi_lo; T0CS FOSC/4; TMR0ON enabled; PSA assigned; 
+    T0CON = 0xD1;
 }
 
 void TMR0_StartTimer(void)
@@ -119,11 +126,41 @@ void TMR0_Reload(void)
 }
 
 
-bool TMR0_HasOverflowOccured(void)
+void TMR0_ISR(void)
 {
-    // check if  overflow has occurred by checking the TMRIF bit
-    return(INTCONbits.TMR0IF);
+
+    // clear the TMR0 interrupt flag
+    INTCONbits.TMR0IF = 0;
+
+    // reload TMR0
+    TMR0L = timer0ReloadVal;
+
+    // ticker function call;
+    // ticker is 1 -> Callback function gets called every time this ISR executes
+    TMR0_CallBack();
+
+    // add your TMR0 interrupt custom code
 }
+
+void TMR0_CallBack(void)
+{
+    // Add your custom callback code here
+
+    if(TMR0_InterruptHandler)
+    {
+        TMR0_InterruptHandler();
+    }
+}
+
+void TMR0_SetInterruptHandler(void (* InterruptHandler)(void)){
+    TMR0_InterruptHandler = InterruptHandler;
+}
+
+void TMR0_DefaultInterruptHandler(void){
+    // add your TMR0 interrupt custom code
+    // or set custom function using TMR0_SetInterruptHandler()
+}
+
 /**
   End of File
 */

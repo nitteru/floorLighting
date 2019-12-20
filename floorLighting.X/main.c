@@ -13,7 +13,7 @@
   Description:
     This header file provides implementations for driver APIs for all modules selected in the GUI.
     Generation Information :
-        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.78
+        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.77
         Device            :  PIC18F25K22
         Driver Version    :  2.00
 */
@@ -41,13 +41,19 @@
     SOFTWARE.
 */
 
+#include <stdint.h>
 #include "mcc_generated_files/mcc.h"
+#include "main.h"
+
+uint16_t adValueLux = 0; // 照度のAD値
+uint16_t adValueLightPower = 0; // LEDの明るさ
+uint16_t adValueLightOnTimer = 0; // 点灯時間
 
 /*
                          Main application
  */
 void main(void)
-{
+{      
     // Initialize the device
     SYSTEM_Initialize();
 
@@ -66,6 +72,7 @@ void main(void)
 
     // Disable the Peripheral Interrupts
     //INTERRUPT_PeripheralInterruptDisable();
+    
 
     while (1)
     {

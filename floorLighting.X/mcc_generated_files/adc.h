@@ -93,6 +93,9 @@ typedef struct
 
 typedef enum
 {
+    LUX_SENSOR =  0x0,
+    LUX_VOLUME =  0x1,
+    ONTIME_VOLUME =  0x2,
     channel_CTMU =  0x1D,
     channel_DAC =  0x1E,
     channel_FVRBuf2 =  0x1F
