@@ -1,24 +1,24 @@
 /**
-  EPWM1 Generated Driver File
+  PWM4 Generated Driver File
 
   @Company
     Microchip Technology Inc.
 
   @File Name
-    epwm1.h
+    pwm4.c
 
   @Summary
-    This is the generated driver implementation file for the EPWM1 driver using PIC10 / PIC12 / PIC16 / PIC18 MCUs
+    This is the generated driver implementation file for the PWM4 driver using PIC10 / PIC12 / PIC16 / PIC18 MCUs
 
   @Description
-    This header file provides implementations for driver APIs for EPWM1.
+    This source file provides implementations for driver APIs for PWM4.
     Generation Information :
-        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.78
+        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.77
         Device            :  PIC18F25K22
         Driver Version    :  2.01
     The generated drivers are tested against the following:
         Compiler          :  XC8 2.05 and above
-        MPLAB             :  MPLAB X 5.20
+         MPLAB 	          :  MPLAB X 5.20
 */
 
 /*
@@ -44,90 +44,51 @@
     SOFTWARE.
 */
 
-#ifndef EPWM1_H
-#define EPWM1_H
-
 /**
   Section: Included Files
 */
 
 #include <xc.h>
-#include <stdint.h>
-
-#ifdef __cplusplus  // Provide C++ Compatibility
-
-    extern "C" {
-
-#endif
+#include "pwm4.h"
 
 /**
-  Section: EPWM Module APIs
+  Section: Macro Declarations
 */
 
+#define PWM4_INITIALIZE_DUTY_VALUE    0
+
 /**
-  @Summary
-    Initializes the EPWM1
+  Section: PWM Module APIs
+*/
 
-  @Description
-    This routine initializes the EPWM1 module.
-    This routine must be called before any other EPWM1 routine is called.
-    This routine should only be called once during system initialization.
+void PWM4_Initialize(void)
+{
+    // Set the PWM4 to the options selected in the User Interface
+	
+	// CCP4M PWM; DC4B 0; 
+	CCP4CON = 0x0C;    
+	
+	// CCPR4L 0; 
+	CCPR4L = 0x00;    
+	
+	// CCPR4H 0; 
+	CCPR4H = 0x00;    
 
-  @Preconditions
-    None
-
-  @Param
-    None
-
-  @Returns
-    None
-
-  @Comment
+	// Selecting Timer 2
+	CCPTMRS1bits.C4TSEL = 0x0;
     
+}
 
- @Example
-    <code>
-    uint16_t dutycycle;
+void PWM4_LoadDutyValue(uint16_t dutyValue)
+{
+   // Writing to 8 MSBs of pwm duty cycle in CCPRL register
+    CCPR4L = ((dutyValue & 0x03FC)>>2);
+    
+   // Writing to 2 LSBs of pwm duty cycle in CCPCON register
+    CCP4CON = ((uint8_t)(CCP4CON & 0xCF) | ((dutyValue & 0x0003)<<4));
+}
 
-    ECCP1_Initialize();
-	EPWM1_LoadDutyValue(dutycycle);
-    </code>
- */
-void EPWM1_Initialize(void);
-
-/**
-  @Summary
-    Loads 16-bit duty cycle.
-
-  @Description
-    This routine loads the 16 bit duty cycle value.
-
-  @Preconditions
-    EPWM1_Initialize() function should have been called before calling this function.
-
-  @Param
-    Pass 16bit duty cycle value.
-
-  @Returns
-    None
-
-  @Example
-    <code>
-    uint16_t dutycycle;
-
-    EPWM1_Initialize();
-    EPWM1_LoadDutyValue(dutycycle);
-    </code>
-*/
-void EPWM1_LoadDutyValue(uint16_t dutyValue);
-        
-#ifdef __cplusplus  // Provide C++ Compatibility
-
-    }
-
-#endif
-
-#endif	//EPWM1_H
 /**
  End of File
 */
+

@@ -13,7 +13,7 @@
   Description:
     This header file provides implementations for driver APIs for all modules selected in the GUI.
     Generation Information :
-        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.78
+        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.77
         Device            :  PIC18F25K22
         Driver Version    :  2.00
 */
@@ -41,7 +41,52 @@
     SOFTWARE.
 */
 
+#include <stdint.h>
 #include "mcc_generated_files/mcc.h"
+#include "main.h"
+
+uint16_t adValueLux = 0;          // 照度のAD値
+uint16_t adValueLightPower = 0;   // LEDの明るさ
+uint16_t adValueLightOnTimer = 0; // 点灯時間
+
+/**
+ * @name インターバルタイマー
+ */
+/*@{*/
+uint16_t intervaltimer_10msec = 0;
+uint16_t intervaltimer_50msec = 0;
+uint16_t intervaltimer_100msec = 0;
+uint16_t intervaltimer_500msec = 0;
+uint16_t intervaltimer_1sec = 0;
+uint16_t intervaltimer_1min = 0;
+/*@}*/
+
+stIntervalTimerFlag itFlag;
+
+/**
+ * @name AD
+ */
+/*@{*/
+uint16_t adLux = 0;              //!< 照度センサー
+uint16_t adLuxVolume = 0;        //!< 点灯するLux
+uint16_t adLightingTime = 0;     //!< 点灯時間
+uint16_t adLightingPower = 0;    //!< 点灯明るさ
+uint16_t adLuxSum = 0;           //!< 照度の平均値計算用
+uint16_t adLuxVolumeSum = 0;     //!< Lux設定の平均値計算用
+uint16_t adLightingTimeSum = 0;  //!< 点灯時間設定の平均値計算用
+uint16_t adLightingPowerSum = 0; //!< 明るさの平均値計算用
+uint8_t adCount = 0;             //!< 平均値合計回数のカウンタ
+uint8_t adCountMax = 0;          //!< 平均値計算カウンタの最大値
+/*@}*/
+
+/**
+ * @name PWM
+ */
+/*@{*/
+uint16_t PWMDutyPrev = 0; //!< 前回のPWM設定値
+uint16_t PWMDuty = 0;     //!< WM設定値
+
+/*@}*/
 
 /*
                          Main application
@@ -67,11 +112,129 @@ void main(void)
     // Disable the Peripheral Interrupts
     //INTERRUPT_PeripheralInterruptDisable();
 
+    itFlag.Flag1msec = 0;
+    itFlag.Flag10msec = 0;
+    itFlag.Flag50msec = 0;
+    itFlag.Flag100msec = 0;
+    itFlag.Flag500msec = 0;
+    itFlag.Flag1sec = 0;
+    itFlag.Flag1min = 0;
+
+    adCountMax = 1 << AD_AVERAGE_COUNT; // AD平均値計算の合計回数
+
     while (1)
     {
         // Add your application code
+        if (itFlag.Flag1msec)
+        {
+            itFlag.Flag1msec = 0;
+        }
+
+        if (itFlag.Flag10msec)
+        {
+            itFlag.Flag10msec = 0;
+
+            // LuxのAD値取得
+            adLuxVolumeSum += ADC_GetConversion(LUX_SENSOR);
+
+            // 点灯時間のAD値取得
+            adLightingTimeSum += ADC_GetConversion(ONTIME_VOLUME);
+
+            // 点灯明るさのAD値取得
+            adLightingPowerSum += ADC_GetConversion(POWER_VOLUME);
+
+            // 照度センサーのしきい値
+            adLuxSum += ADC_GetConversion(LUX_VOLUME);
+
+            if (++adCount == adCountMax)
+            {
+                // 平均値計算
+                adLux = adLuxSum >> AD_AVERAGE_COUNT;
+                adLightingPower = adLightingPowerSum >> AD_AVERAGE_COUNT;
+                adLightingTime = adLightingTimeSum >> AD_AVERAGE_COUNT;
+                adLuxVolume = adLuxVolumeSum >> AD_AVERAGE_COUNT;
+
+                adCount = 0 adLuxSum = 0;
+                adLightingPowerSum = 0;
+                adLightingTimeSum = 0;
+                adLuxVolumeSum = 0;
+
+                if (PWMDuty != PWMDutyPrev)
+                {
+                    PWM4_LoadDutyValue(PWMDuty);
+                    PWMDutyPrev = PWMDuty;
+                }
+            }
+        }
+
+        if (itFlag.Flag50msec)
+        {
+            itFlag.Flag50msec = 0;
+        }
+
+        if (itFlag.Flag100msec)
+        {
+            itFlag.Flag100msec = 0;
+        }
+
+        if (itFlag.Flag500msec)
+        {
+            itFlag.Flag500msec = 0;
+        }
+
+        if (itFlag.Flag1sec)
+        {
+            itFlag.Flag1sec = 0;
+        }
+
+        if (itFlag.Flag1min)
+        {
+            itFlag.Flag1min = 0;
+        }
     }
 }
+
+void CalIntervalTimer()
+{
+    itFlag.Flag1msec = 1;
+
+    if (++intervaltimer_10msec == INTERVAL_COUNT_10MSEC)
+    {
+        intervaltimer_10msec = 0;
+        itFlag.Flag10msec = 1;
+    }
+
+    if (++intervaltimer_50msec == INTERVAL_COUNT_50MSEC)
+    {
+        intervaltimer_50msec = 0;
+        itFlag.Flag50msec = 1;
+    }
+
+    if (++intervaltimer_100msec == INTERVAL_COUNT_100MSEC)
+    {
+        intervaltimer_100msec = 0;
+        itFlag.Flag100msec = 1;
+    }
+
+    if (++intervaltimer_500msec == INTERVAL_COUNT_500MSEC)
+    {
+        intervaltimer_500msec = 0;
+        itFlag.Flag500msec = 1;
+    }
+
+    if (++intervaltimer_1sec == INTERVAL_COUNT_1SEC)
+    {
+        intervaltimer_1sec = 0;
+        itFlag.Flag1sec = 1;
+    }
+
+    if (++intervaltimer_1min == INTERVAL_COUNT_1MIN)
+    {
+        intervaltimer_1sec = 0;
+        itFlag.Flag1sec = 1;
+    }
+}
+
 /**
  End of File
 */

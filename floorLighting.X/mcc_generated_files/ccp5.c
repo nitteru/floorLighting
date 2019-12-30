@@ -13,7 +13,7 @@
   @Description
     This source file provides implementations for driver APIs for CCP5.
     Generation Information :
-        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.78
+        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.77
         Device            :  PIC18F25K22
         Driver Version    :  2.01
     The generated drivers are tested against the following:
