@@ -31,13 +31,47 @@
 #ifndef XC_HEADER_TEMPLATE_H
 #define	XC_HEADER_TEMPLATE_H
 
-#include <xc.h> // include processor files - each processor file is guarded.  
+#include <xc.h> // include processor files - each processor file is guarded. "
+#include <stdint.h>
 
 /**
- * @name 設定
+ * @name インターバルタイマ 設定
  */
 /*@{*/
-
+#define INTERVAL_COUNT_10MSEC 10 //!< インターバルタイマ 10msec, 1msec * 10
+#define INTERVAL_COUNT_50MSEC 50 //!< インターバルタイマ 50msec
+#define INTERVAL_COUNT_100MSEC 100 //!< インターバルタイマ 100msec
+#define INTERVAL_COUNT_500MSEC 500 //!< インターバルタイマ 500msec
+#define INTERVAL_COUNT_1SEC 1000  //!< インターバルタイマ 1sec
+#define INTERVAL_COUNT_1MIN 60000 //!< インターバルタイマ 1min
 /*@}*/
+
+/**
+ * @struct stIntervalTimerFlag
+ * @breif インターバルタイマ フラグ
+ */
+/*@{*/
+typedef struct
+{
+    uint8_t Flag1msec : 1; //!< 1msec経過
+    uint8_t Flag10msec : 1; //!< 10msec経過
+    uint8_t Flag50msec : 1; //!< 50msec経過
+    uint8_t Flag100msec : 1; //!< 100msec経過
+    uint8_t Flag500msec : 1; //!< 500msec経過
+    uint8_t Flag1sec : 1; //!< 1sec経過
+    uint8_t Flag1min : 1; //!< 1min経過
+}  stIntervalTimerFlag;
+/*@}*/
+
+
+/**
+ * @name AD平均値計算
+ */
+/*@{*/
+#define AD_AVERAGE_COUNT 2 //!< 2^n回の平均
+/*@}*/
+
+void CalIntervalTimer(void);
+
 #endif	/* XC_HEADER_TEMPLATE_H */
 

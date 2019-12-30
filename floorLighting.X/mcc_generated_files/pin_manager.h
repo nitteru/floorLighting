@@ -107,6 +107,20 @@
 #define ONTIME_VOLUME_SetAnalogMode()      do { ANSELAbits.ANSA2 = 1; } while(0)
 #define ONTIME_VOLUME_SetDigitalMode()     do { ANSELAbits.ANSA2 = 0; } while(0)
 
+// get/set POWER_VOLUME aliases
+#define POWER_VOLUME_TRIS                 TRISAbits.TRISA3
+#define POWER_VOLUME_LAT                  LATAbits.LATA3
+#define POWER_VOLUME_PORT                 PORTAbits.RA3
+#define POWER_VOLUME_ANS                  ANSELAbits.ANSA3
+#define POWER_VOLUME_SetHigh()            do { LATAbits.LATA3 = 1; } while(0)
+#define POWER_VOLUME_SetLow()             do { LATAbits.LATA3 = 0; } while(0)
+#define POWER_VOLUME_Toggle()             do { LATAbits.LATA3 = ~LATAbits.LATA3; } while(0)
+#define POWER_VOLUME_GetValue()           PORTAbits.RA3
+#define POWER_VOLUME_SetDigitalInput()    do { TRISAbits.TRISA3 = 1; } while(0)
+#define POWER_VOLUME_SetDigitalOutput()   do { TRISAbits.TRISA3 = 0; } while(0)
+#define POWER_VOLUME_SetAnalogMode()      do { ANSELAbits.ANSA3 = 1; } while(0)
+#define POWER_VOLUME_SetDigitalMode()     do { ANSELAbits.ANSA3 = 0; } while(0)
+
 // get/set RB0 procedures
 #define RB0_SetHigh()            do { LATBbits.LATB0 = 1; } while(0)
 #define RB0_SetLow()             do { LATBbits.LATB0 = 0; } while(0)
