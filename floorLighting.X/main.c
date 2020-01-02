@@ -62,6 +62,15 @@ uint16_t intervaltimer_1min = 0;
 /*@}*/
 
 stIntervalTimerFlag itFlag;
+stModeFlag modeFlag;
+
+/**
+ * @name 人感センサー
+ */
+/*@{*/
+uint8_t delayCounterIR1 = 0;
+uint8_t delayCounterIR2 = 0;
+/*@}*/
 
 /**
  * @name AD
@@ -83,9 +92,18 @@ uint8_t adCountMax = 0;          //!< 平均値計算カウンタの最大値
  * @name PWM
  */
 /*@{*/
-uint16_t PWMDutyPrev = 0; //!< 前回のPWM設定値
-uint16_t PWMDuty = 0;     //!< WM設定値
+uint16_t PWMDutyPrev = 0;   //!< 前回のPWM設定値
+uint16_t PWMDuty = 0;       //!< WM設定値
+uint16_t PWMDutyTarget = 0; //!< PWM設定の目標値
+/*@}*/
 
+/**
+ * @name LED
+ */
+/*@{*/
+uint16_t ledCounter = 0;       //!< LEDの点灯時間カウンタ
+uint16_t LedCounterTarget = 0; //!< LEDの点灯時間ターゲット
+enLEDStatus ledStatus = OFF;   //!< LED点灯制御
 /*@}*/
 
 /*
@@ -120,6 +138,9 @@ void main(void)
     itFlag.Flag1sec = 0;
     itFlag.Flag1min = 0;
 
+    modeFlag.FlagIR1Sensor = 0;
+    modeFlag.FlagIR2Sensor = 0;
+
     adCountMax = 1 << AD_AVERAGE_COUNT; // AD平均値計算の合計回数
 
     while (1)
@@ -128,6 +149,35 @@ void main(void)
         if (itFlag.Flag1msec)
         {
             itFlag.Flag1msec = 0;
+
+            if (ledStatus == FADE_IN)
+            {
+                // PWMのデューティを上げる
+                if (PWMDuty < PWMDutyTarget)
+                {
+                    PWMDuty += LED_FADE_VALUE;
+                    PWM4_LoadDutyValue(PWMDuty);
+                }
+                else if (PWMDuty >= PWMDutyTarget)
+                {
+                    ledStatus = ON;
+                    PWM4_LoadDutyValue(PWMDuty);
+                }
+            }
+            else if (ledStatus == FADE_OUT)
+            {
+                // PWMのデューティを下げる
+                if (PWMDuty > 0)
+                {
+                    PWMDuty -= LED_FADE_VALUE;
+                    PWM4_LoadDutyValue(PWMDuty);
+                }
+                else if (PWMDuty == 0)
+                {
+                    ledStatus = OFF;
+                    PWM4_LoadDutyValue(PWMDuty);
+                }
+            }
         }
 
         if (itFlag.Flag10msec)
@@ -154,16 +204,47 @@ void main(void)
                 adLightingTime = adLightingTimeSum >> AD_AVERAGE_COUNT;
                 adLuxVolume = adLuxVolumeSum >> AD_AVERAGE_COUNT;
 
-                adCount = 0 adLuxSum = 0;
+                adCount = 0;
+                adLuxSum = 0;
                 adLightingPowerSum = 0;
                 adLightingTimeSum = 0;
                 adLuxVolumeSum = 0;
 
+                /* 
+                 * LED明るさ
+                 * ADC 12bit, PWM 10bitなので2bit右シフトして1/4にする
+                 */
+                PWMDutyTarget = adLightingPower >> 2;
+
+                // 点灯時間設定
+                LedCounterTarget = (uint16_t)((double)1800 * (double)(adLightingPower / 4096)) + 30;
+
+                // 照度による点灯可能判定
+                if (modeFlag.FlagLuxEnable)
+                {
+                    // ヒス以上の変化があれば点灯不可にする
+                    if (adLux > (adLuxVolume + AD_LUX_SENSOR_HIS))
+                    {
+                        modeFlag.FlagLuxEnable = 0;
+                        ledStatus = FADE_OUT;
+                    }
+                }
+                else if (~modeFlag.FlagLuxEnable)
+                {
+                    // ヒス以上の変化があれば点灯可能にする
+                    if ((adLux + AD_LUX_SENSOR_HIS) < adLuxVolume)
+                    {
+                        modeFlag.FlagLuxEnable = 1;
+                    }
+                }
+
+                /*
                 if (PWMDuty != PWMDutyPrev)
                 {
                     PWM4_LoadDutyValue(PWMDuty);
                     PWMDutyPrev = PWMDuty;
                 }
+                */
             }
         }
 
@@ -175,6 +256,25 @@ void main(void)
         if (itFlag.Flag100msec)
         {
             itFlag.Flag100msec = 0;
+
+            // 消灯中なら点灯､点灯中なら消灯までの時間を延長する
+            if (ledStatus == ON)
+            {
+                ledCounter = LedCounterTarget;
+            }
+            else if (ledStatus == OFF)
+            {
+                // 照度値が設定以下でIRセンサーの入力があればLED点灯
+                if (modeFlag.FlagLuxEnable && (modeFlag.FlagIR1Sensor || modeFlag.FlagIR2Sensor))
+                {
+                    ledCounter = LedCounterTarget;
+                    ledStatus = FADE_IN;
+                }
+            }
+            else if (ledStatus == FADE_OUT)
+            {
+                ledStatus = FADE_IN;
+            }
         }
 
         if (itFlag.Flag500msec)
@@ -185,6 +285,18 @@ void main(void)
         if (itFlag.Flag1sec)
         {
             itFlag.Flag1sec = 0;
+
+            /*
+             * LED点灯カウンタのデクリメント
+             * 設定可能な点灯時間は30secから30min (1800sec)まで?
+             */
+            if (ledStatus == ON)
+            {
+                if (--ledCounter == 0)
+                {
+                    ledStatus = FADE_OUT;
+                }
+            }
         }
 
         if (itFlag.Flag1min)

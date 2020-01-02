@@ -19,13 +19,14 @@
      The generated drivers are tested against the following:
          Compiler          :  XC8 2.05 and above
          MPLAB             :  MPLAB X 5.20
- */ 
+ */
 
- /**
+/**
    Section: Includes
  */
 #include <xc.h>
 #include "ext_int.h"
+#include "main.h"
 
 void (*INT1_InterruptHandler)(void);
 void (*INT2_InterruptHandler)(void);
@@ -35,73 +36,78 @@ void INT1_ISR(void)
     EXT_INT1_InterruptFlagClear();
 
     // Callback function gets called everytime this ISR executes
-    INT1_CallBack();    
+    INT1_CallBack();
 }
-
 
 void INT1_CallBack(void)
 {
     // Add your custom callback code here
-    if(INT1_InterruptHandler)
+    if (INT1_InterruptHandler)
     {
         INT1_InterruptHandler();
     }
 }
 
-void INT1_SetInterruptHandler(void (* InterruptHandler)(void)){
+void INT1_SetInterruptHandler(void (*InterruptHandler)(void))
+{
     INT1_InterruptHandler = InterruptHandler;
 }
 
-void INT1_DefaultInterruptHandler(void){
+void INT1_DefaultInterruptHandler(void)
+{
     // add your INT1 interrupt custom code
     // or set custom function using INT1_SetInterruptHandler()
+
+    // 人感センサー1の入力フラグをONにする
+    modeFlag.FlagIR1Sensor = 1;
 }
 void INT2_ISR(void)
 {
     EXT_INT2_InterruptFlagClear();
 
     // Callback function gets called everytime this ISR executes
-    INT2_CallBack();    
+    INT2_CallBack();
 }
-
 
 void INT2_CallBack(void)
 {
     // Add your custom callback code here
-    if(INT2_InterruptHandler)
+    if (INT2_InterruptHandler)
     {
         INT2_InterruptHandler();
     }
 }
 
-void INT2_SetInterruptHandler(void (* InterruptHandler)(void)){
+void INT2_SetInterruptHandler(void (*InterruptHandler)(void))
+{
     INT2_InterruptHandler = InterruptHandler;
 }
 
-void INT2_DefaultInterruptHandler(void){
+void INT2_DefaultInterruptHandler(void)
+{
     // add your INT2 interrupt custom code
     // or set custom function using INT2_SetInterruptHandler()
+
+    // 人感センサー2の入力フラグをONにする
+    modeFlag.FlagIR2Sensor = 1;
 }
 
 void EXT_INT_Initialize(void)
 {
-    
+
     // Clear the interrupt flag
     // Set the external interrupt edge detect
-    EXT_INT1_InterruptFlagClear();   
-    EXT_INT1_fallingEdgeSet();    
+    EXT_INT1_InterruptFlagClear();
+    EXT_INT1_fallingEdgeSet();
     // Set Default Interrupt Handler
     INT1_SetInterruptHandler(INT1_DefaultInterruptHandler);
-    EXT_INT1_InterruptEnable();      
+    EXT_INT1_InterruptEnable();
 
-    
     // Clear the interrupt flag
     // Set the external interrupt edge detect
-    EXT_INT2_InterruptFlagClear();   
-    EXT_INT2_fallingEdgeSet();    
+    EXT_INT2_InterruptFlagClear();
+    EXT_INT2_fallingEdgeSet();
     // Set Default Interrupt Handler
     INT2_SetInterruptHandler(INT2_DefaultInterruptHandler);
-    EXT_INT2_InterruptEnable();      
-
+    EXT_INT2_InterruptEnable();
 }
-
