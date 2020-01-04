@@ -178,6 +178,15 @@ void main(void)
                     PWM4_LoadDutyValue(PWMDuty);
                 }
             }
+            else if (ledStatus == ON)
+            {
+                // PWM目標値に変化があったら追従する
+                if (PWMDuty != PWMDutyTarget)
+                {
+                    PWM4_LoadDutyValue(PWMDutyTarget);
+                    PWMDuty = PWMDutyTarget;
+                }
+            }
         }
 
         if (itFlag.Flag10msec)
@@ -216,8 +225,12 @@ void main(void)
                  */
                 PWMDutyTarget = adLightingPower >> 2;
 
-                // 点灯時間設定
-                LedCounterTarget = (uint16_t)((double)1800 * (double)(adLightingPower / 4096)) + 30;
+                /*
+                 * 点灯時間設定
+                 * 2048秒 → 約34分を上限にするためAD値を1/2する
+                 * 最低は30秒とするため30秒加算する
+                 */
+                LedCounterTarget = (uint16_t)(adLightingPower >> 1) + 30;
 
                 // 照度による点灯可能判定
                 if (modeFlag.FlagLuxEnable)
@@ -237,14 +250,6 @@ void main(void)
                         modeFlag.FlagLuxEnable = 1;
                     }
                 }
-
-                /*
-                if (PWMDuty != PWMDutyPrev)
-                {
-                    PWM4_LoadDutyValue(PWMDuty);
-                    PWMDutyPrev = PWMDuty;
-                }
-                */
             }
         }
 
@@ -258,22 +263,23 @@ void main(void)
             itFlag.Flag100msec = 0;
 
             // 消灯中なら点灯､点灯中なら消灯までの時間を延長する
-            if (ledStatus == ON)
+
+            // 照度値が設定以下でIRセンサーの入力があればLED点灯
+            if (modeFlag.FlagLuxEnable && (modeFlag.FlagIR1Sensor || modeFlag.FlagIR2Sensor))
             {
-                ledCounter = LedCounterTarget;
-            }
-            else if (ledStatus == OFF)
-            {
-                // 照度値が設定以下でIRセンサーの入力があればLED点灯
-                if (modeFlag.FlagLuxEnable && (modeFlag.FlagIR1Sensor || modeFlag.FlagIR2Sensor))
+                if (ledStatus == ON)
+                {
+                    ledCounter = LedCounterTarget;
+                }
+                else if (ledStatus == OFF)
                 {
                     ledCounter = LedCounterTarget;
                     ledStatus = FADE_IN;
                 }
-            }
-            else if (ledStatus == FADE_OUT)
-            {
-                ledStatus = FADE_IN;
+                else if (ledStatus == FADE_OUT)
+                {
+                    ledStatus = FADE_IN;
+                }
             }
         }
 
