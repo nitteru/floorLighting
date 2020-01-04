@@ -92,7 +92,6 @@ uint8_t adCountMax = 0;          //!< 平均値計算カウンタの最大値
  * @name PWM
  */
 /*@{*/
-uint16_t PWMDutyPrev = 0;   //!< 前回のPWM設定値
 uint16_t PWMDuty = 0;       //!< WM設定値
 uint16_t PWMDutyTarget = 0; //!< PWM設定の目標値
 /*@}*/
@@ -146,6 +145,10 @@ void main(void)
     while (1)
     {
         // Add your application code
+        SLEEP();
+
+        CLRWDT();
+
         if (itFlag.Flag1msec)
         {
             itFlag.Flag1msec = 0;
@@ -230,7 +233,7 @@ void main(void)
                  * 2048秒 → 約34分を上限にするためAD値を1/2する
                  * 最低は30秒とするため30秒加算する
                  */
-                LedCounterTarget = (uint16_t)(adLightingPower >> 1) + 30;
+                LedCounterTarget = (uint16_t)((adLightingPower >> 1) + 30);
 
                 // 照度による点灯可能判定
                 if (modeFlag.FlagLuxEnable)
