@@ -50,6 +50,7 @@
 
 #include <xc.h>
 #include "tmr0.h"
+#include "main.h"
 
 /**
   Section: Global Variables Definitions
@@ -159,6 +160,7 @@ void TMR0_SetInterruptHandler(void (* InterruptHandler)(void)){
 void TMR0_DefaultInterruptHandler(void){
     // add your TMR0 interrupt custom code
     // or set custom function using TMR0_SetInterruptHandler()
+    CalIntervalTimer();
 }
 
 /**

@@ -13,12 +13,12 @@
   @Description
     This header file provides APIs for driver for .
     Generation Information :
-        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.77
+        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.78.1
         Device            :  PIC18F25K22
         Driver Version    :  2.11
     The generated drivers are tested against the following:
-        Compiler          :  XC8 2.05 and above
-        MPLAB 	          :  MPLAB X 5.20	
+        Compiler          :  XC8 2.10 and above
+        MPLAB 	          :  MPLAB X 5.30	
 */
 
 /*
@@ -65,61 +65,61 @@
 #define PULL_UP_ENABLED      1
 #define PULL_UP_DISABLED     0
 
-// get/set LUX_SENSOR aliases
-#define LUX_SENSOR_TRIS                 TRISAbits.TRISA0
-#define LUX_SENSOR_LAT                  LATAbits.LATA0
-#define LUX_SENSOR_PORT                 PORTAbits.RA0
-#define LUX_SENSOR_ANS                  ANSELAbits.ANSA0
-#define LUX_SENSOR_SetHigh()            do { LATAbits.LATA0 = 1; } while(0)
-#define LUX_SENSOR_SetLow()             do { LATAbits.LATA0 = 0; } while(0)
-#define LUX_SENSOR_Toggle()             do { LATAbits.LATA0 = ~LATAbits.LATA0; } while(0)
-#define LUX_SENSOR_GetValue()           PORTAbits.RA0
-#define LUX_SENSOR_SetDigitalInput()    do { TRISAbits.TRISA0 = 1; } while(0)
-#define LUX_SENSOR_SetDigitalOutput()   do { TRISAbits.TRISA0 = 0; } while(0)
-#define LUX_SENSOR_SetAnalogMode()      do { ANSELAbits.ANSA0 = 1; } while(0)
-#define LUX_SENSOR_SetDigitalMode()     do { ANSELAbits.ANSA0 = 0; } while(0)
-
-// get/set LUX_VOLUME aliases
-#define LUX_VOLUME_TRIS                 TRISAbits.TRISA1
-#define LUX_VOLUME_LAT                  LATAbits.LATA1
-#define LUX_VOLUME_PORT                 PORTAbits.RA1
-#define LUX_VOLUME_ANS                  ANSELAbits.ANSA1
-#define LUX_VOLUME_SetHigh()            do { LATAbits.LATA1 = 1; } while(0)
-#define LUX_VOLUME_SetLow()             do { LATAbits.LATA1 = 0; } while(0)
-#define LUX_VOLUME_Toggle()             do { LATAbits.LATA1 = ~LATAbits.LATA1; } while(0)
-#define LUX_VOLUME_GetValue()           PORTAbits.RA1
-#define LUX_VOLUME_SetDigitalInput()    do { TRISAbits.TRISA1 = 1; } while(0)
-#define LUX_VOLUME_SetDigitalOutput()   do { TRISAbits.TRISA1 = 0; } while(0)
-#define LUX_VOLUME_SetAnalogMode()      do { ANSELAbits.ANSA1 = 1; } while(0)
-#define LUX_VOLUME_SetDigitalMode()     do { ANSELAbits.ANSA1 = 0; } while(0)
-
 // get/set ONTIME_VOLUME aliases
-#define ONTIME_VOLUME_TRIS                 TRISAbits.TRISA2
-#define ONTIME_VOLUME_LAT                  LATAbits.LATA2
-#define ONTIME_VOLUME_PORT                 PORTAbits.RA2
-#define ONTIME_VOLUME_ANS                  ANSELAbits.ANSA2
-#define ONTIME_VOLUME_SetHigh()            do { LATAbits.LATA2 = 1; } while(0)
-#define ONTIME_VOLUME_SetLow()             do { LATAbits.LATA2 = 0; } while(0)
-#define ONTIME_VOLUME_Toggle()             do { LATAbits.LATA2 = ~LATAbits.LATA2; } while(0)
-#define ONTIME_VOLUME_GetValue()           PORTAbits.RA2
-#define ONTIME_VOLUME_SetDigitalInput()    do { TRISAbits.TRISA2 = 1; } while(0)
-#define ONTIME_VOLUME_SetDigitalOutput()   do { TRISAbits.TRISA2 = 0; } while(0)
-#define ONTIME_VOLUME_SetAnalogMode()      do { ANSELAbits.ANSA2 = 1; } while(0)
-#define ONTIME_VOLUME_SetDigitalMode()     do { ANSELAbits.ANSA2 = 0; } while(0)
+#define ONTIME_VOLUME_TRIS                 TRISAbits.TRISA0
+#define ONTIME_VOLUME_LAT                  LATAbits.LATA0
+#define ONTIME_VOLUME_PORT                 PORTAbits.RA0
+#define ONTIME_VOLUME_ANS                  ANSELAbits.ANSA0
+#define ONTIME_VOLUME_SetHigh()            do { LATAbits.LATA0 = 1; } while(0)
+#define ONTIME_VOLUME_SetLow()             do { LATAbits.LATA0 = 0; } while(0)
+#define ONTIME_VOLUME_Toggle()             do { LATAbits.LATA0 = ~LATAbits.LATA0; } while(0)
+#define ONTIME_VOLUME_GetValue()           PORTAbits.RA0
+#define ONTIME_VOLUME_SetDigitalInput()    do { TRISAbits.TRISA0 = 1; } while(0)
+#define ONTIME_VOLUME_SetDigitalOutput()   do { TRISAbits.TRISA0 = 0; } while(0)
+#define ONTIME_VOLUME_SetAnalogMode()      do { ANSELAbits.ANSA0 = 1; } while(0)
+#define ONTIME_VOLUME_SetDigitalMode()     do { ANSELAbits.ANSA0 = 0; } while(0)
 
 // get/set POWER_VOLUME aliases
-#define POWER_VOLUME_TRIS                 TRISAbits.TRISA3
-#define POWER_VOLUME_LAT                  LATAbits.LATA3
-#define POWER_VOLUME_PORT                 PORTAbits.RA3
-#define POWER_VOLUME_ANS                  ANSELAbits.ANSA3
-#define POWER_VOLUME_SetHigh()            do { LATAbits.LATA3 = 1; } while(0)
-#define POWER_VOLUME_SetLow()             do { LATAbits.LATA3 = 0; } while(0)
-#define POWER_VOLUME_Toggle()             do { LATAbits.LATA3 = ~LATAbits.LATA3; } while(0)
-#define POWER_VOLUME_GetValue()           PORTAbits.RA3
-#define POWER_VOLUME_SetDigitalInput()    do { TRISAbits.TRISA3 = 1; } while(0)
-#define POWER_VOLUME_SetDigitalOutput()   do { TRISAbits.TRISA3 = 0; } while(0)
-#define POWER_VOLUME_SetAnalogMode()      do { ANSELAbits.ANSA3 = 1; } while(0)
-#define POWER_VOLUME_SetDigitalMode()     do { ANSELAbits.ANSA3 = 0; } while(0)
+#define POWER_VOLUME_TRIS                 TRISAbits.TRISA1
+#define POWER_VOLUME_LAT                  LATAbits.LATA1
+#define POWER_VOLUME_PORT                 PORTAbits.RA1
+#define POWER_VOLUME_ANS                  ANSELAbits.ANSA1
+#define POWER_VOLUME_SetHigh()            do { LATAbits.LATA1 = 1; } while(0)
+#define POWER_VOLUME_SetLow()             do { LATAbits.LATA1 = 0; } while(0)
+#define POWER_VOLUME_Toggle()             do { LATAbits.LATA1 = ~LATAbits.LATA1; } while(0)
+#define POWER_VOLUME_GetValue()           PORTAbits.RA1
+#define POWER_VOLUME_SetDigitalInput()    do { TRISAbits.TRISA1 = 1; } while(0)
+#define POWER_VOLUME_SetDigitalOutput()   do { TRISAbits.TRISA1 = 0; } while(0)
+#define POWER_VOLUME_SetAnalogMode()      do { ANSELAbits.ANSA1 = 1; } while(0)
+#define POWER_VOLUME_SetDigitalMode()     do { ANSELAbits.ANSA1 = 0; } while(0)
+
+// get/set LUX_VOLUME aliases
+#define LUX_VOLUME_TRIS                 TRISAbits.TRISA2
+#define LUX_VOLUME_LAT                  LATAbits.LATA2
+#define LUX_VOLUME_PORT                 PORTAbits.RA2
+#define LUX_VOLUME_ANS                  ANSELAbits.ANSA2
+#define LUX_VOLUME_SetHigh()            do { LATAbits.LATA2 = 1; } while(0)
+#define LUX_VOLUME_SetLow()             do { LATAbits.LATA2 = 0; } while(0)
+#define LUX_VOLUME_Toggle()             do { LATAbits.LATA2 = ~LATAbits.LATA2; } while(0)
+#define LUX_VOLUME_GetValue()           PORTAbits.RA2
+#define LUX_VOLUME_SetDigitalInput()    do { TRISAbits.TRISA2 = 1; } while(0)
+#define LUX_VOLUME_SetDigitalOutput()   do { TRISAbits.TRISA2 = 0; } while(0)
+#define LUX_VOLUME_SetAnalogMode()      do { ANSELAbits.ANSA2 = 1; } while(0)
+#define LUX_VOLUME_SetDigitalMode()     do { ANSELAbits.ANSA2 = 0; } while(0)
+
+// get/set LUX_SENSOR aliases
+#define LUX_SENSOR_TRIS                 TRISAbits.TRISA3
+#define LUX_SENSOR_LAT                  LATAbits.LATA3
+#define LUX_SENSOR_PORT                 PORTAbits.RA3
+#define LUX_SENSOR_ANS                  ANSELAbits.ANSA3
+#define LUX_SENSOR_SetHigh()            do { LATAbits.LATA3 = 1; } while(0)
+#define LUX_SENSOR_SetLow()             do { LATAbits.LATA3 = 0; } while(0)
+#define LUX_SENSOR_Toggle()             do { LATAbits.LATA3 = ~LATAbits.LATA3; } while(0)
+#define LUX_SENSOR_GetValue()           PORTAbits.RA3
+#define LUX_SENSOR_SetDigitalInput()    do { TRISAbits.TRISA3 = 1; } while(0)
+#define LUX_SENSOR_SetDigitalOutput()   do { TRISAbits.TRISA3 = 0; } while(0)
+#define LUX_SENSOR_SetAnalogMode()      do { ANSELAbits.ANSA3 = 1; } while(0)
+#define LUX_SENSOR_SetDigitalMode()     do { ANSELAbits.ANSA3 = 0; } while(0)
 
 // get/set RB0 procedures
 #define RB0_SetHigh()            do { LATBbits.LATB0 = 1; } while(0)

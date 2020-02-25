@@ -39,6 +39,7 @@ void INT1_ISR(void)
     INT1_CallBack();
 }
 
+
 void INT1_CallBack(void)
 {
     // Add your custom callback code here
@@ -48,13 +49,11 @@ void INT1_CallBack(void)
     }
 }
 
-void INT1_SetInterruptHandler(void (*InterruptHandler)(void))
-{
+void INT1_SetInterruptHandler(void (* InterruptHandler)(void)){
     INT1_InterruptHandler = InterruptHandler;
 }
 
-void INT1_DefaultInterruptHandler(void)
-{
+void INT1_DefaultInterruptHandler(void){
     // add your INT1 interrupt custom code
     // or set custom function using INT1_SetInterruptHandler()
 
@@ -69,10 +68,11 @@ void INT2_ISR(void)
     INT2_CallBack();
 }
 
+
 void INT2_CallBack(void)
 {
     // Add your custom callback code here
-    if (INT2_InterruptHandler)
+    if(INT2_InterruptHandler)
     {
         INT2_InterruptHandler();
     }
